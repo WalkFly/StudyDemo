@@ -8,4 +8,14 @@ package cn.com.soyea.zx.optimization.cheapter2.demo2;
 public class StackOverflowTest {
     static int count =0;
 
+    public static void doTest(){
+        while(true){
+            count ++;
+        }
+    }
+
+    public static void main(String[] args) {
+        StackOverflowTest.doTest();
+    }
+
 }
