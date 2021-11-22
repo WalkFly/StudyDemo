@@ -1,0 +1,13 @@
+#由于实例中的代码无法创建，这里手动写了一个版本
+DROP PROCEDURE IF EXISTS proc_initData1;
+
+CREATE PROCEDURE proc_initData1()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i<=10000 DO
+       insert into employees(name,age,position) values(CONCAT('zhuge',i),i,'dev');
+        SET i = i+1;
+    END WHILE;
+END
+
+CALL proc_initData1();
