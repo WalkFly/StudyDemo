@@ -1,0 +1,37 @@
+#介绍下AspectJ和AOP和关系
+Spring Aop：
+它基于动态代理来实现。默认地，如果使用接口的，用 JDK 提供的动态代理实现，如果没有接口，使用 CGLIB 实现。大家一定要明白背后的意思，包括什么时候会不用 JDK 提供的动态代理，而用 CGLIB 实现。
+Spring 3.2 以后，spring-core 直接就把 CGLIB 和 ASM 的源码包括进来了，这也是为什么我们不需要显式引入这两个依赖
+Spring 的 IOC 容器和 AOP 都很重要，Spring AOP 需要依赖于 IOC 容器来管理。
+Spring AOP 只能作用于 Spring 容器中的 Bean，它是使用纯粹的 Java 代码实现的，只能作用于 bean 的方法。
+Spring 提供了 AspectJ 的支持，但只用到的AspectJ的切点解析和匹配。
+很多人会对比 Spring AOP 和 AspectJ 的性能，Spring AOP 是基于代理实现的，在容器启动的时候需要生成代理实例，在方法调用上也会增加栈的深度，使得 Spring AOP 的性能不如 AspectJ 那么好。
+AspectJ：
+AspectJ 出身也是名门，来自于 Eclipse 基金会，link：https://www.eclipse.org/aspectj
+属于静态织入，它是通过修改代码来实现的，它的织入时机可以是：
+Compile-time weaving：编译期织入，如类 A 使用 AspectJ 添加了一个属性，类 B 引用了它，这个场景就需要编译期的时候就进行织入，否则没法编译类 B。
+Post-compile weaving：编译后织入，也就是已经生成了 .class 文件，或已经打成 jar 包了，这种情况我们需要增强处理的话，就要用到编译后织入。
+Load-time weaving：指的是在加载类的时候进行织入，要实现这个时期的织入，有几种常见的方法。1、自定义类加载器来干这个，这个应该是最容易想到的办法，在被织入类加载到 JVM 前去对它进行加载，这样就可以在加载的时候定义行为了。2、在 JVM 启动的时候指定 AspectJ 提供的 agent：-javaagent:xxx/xxx/aspectjweaver.jar。
+AspectJ 能干很多 Spring AOP 干不了的事情，它是 AOP 编程的完全解决方案。Spring AOP 致力于解决的是企业级开发中最普遍的 AOP 需求（方法织入），而不是力求成为一个像 AspectJ 一样的 AOP 编程完全解决方案。
+因为 AspectJ 在实际代码运行前完成了织入，所以大家会说它生成的类是没有额外运行时开销的。
+
+
+#aop实现的四种方式
+1.在编译期，切面直接以字节 码的形式编译到目标字节 码文件中。
+AspectJ属于静态AOP，是在编译时进行增强，会在编译的时候将AOP逻辑织入到代码中，需要专有的编译器和织入器。
+2.动态AOP
+JDK动态代理
+在运行期，目标类加载后，为接口动态生成代理类，将切面植入到代理类中。
+3.动态代码字节生成
+在运行期，目标类加载后，动态构建字节码文件生成目标类的子类，将切面逻辑加入到子类中。
+4.自定义类加载器
+在运行前，目标加载前，将切面逻辑加到目标字节码中。
+
+#Spring AOP中aspect、advise、pointcut、advisor分别有什么意义?
+切点（PointCut）：一系列连接点的集合，它指明处理方式（Advice）将在何处被触发，可以使用正则表达式表达。
+处理逻辑（Advice）：在某个连接点所采用的处理逻辑。
+Advisor：是PointCut和Advice的综合体，完整描述了一个advice将会在pointcut所定义的位置被触发。
+
+#aop实现原理
+
+
